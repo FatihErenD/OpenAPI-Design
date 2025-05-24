@@ -1,0 +1,523 @@
+openapi: 3.0.4
+info:
+  title: "University Library API"
+  version: "1.0.0"
+  description: >-
+    RESTful API specification for the university's online library system.
+servers:
+  - url: "https://api.marmarauniversity.edu/v1"
+    description: Production server
+paths:
+  /books:
+    get:
+      tags:
+        - books
+      summary: Retrieve all books
+      description: Retrieves a paginated list of books.
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          description: A paginated list of books.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookList'
+              example:
+                totalItems: 125
+                page: 1
+                size: 10
+                items:
+                  - id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    title: "Clean Code"
+                    author: "Robert C. Martin"
+                    isbn: "9780132350884"
+                    publisher: "Prentice Hall"
+                    pageCount: 464
+                    stock: 12
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    post:
+      tags:
+        - books
+      summary: Add a new book
+      description: Creates a new book in the library.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookCreate'
+      responses:
+        '201':
+          description: Book created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /books/{id}:
+    parameters:
+      - $ref: '#/components/parameters/id'
+    get:
+      tags:
+        - books
+      summary: Retrieve a book by ID
+      description: Retrieves a single book.
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+              example:
+                id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                title: "Clean Code"
+                author: "Robert C. Martin"
+                isbn: "9780132350884"
+                publisher: "Prentice Hall"
+                pageCount: 464
+                stock: 12
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    put:
+      tags:
+        - books
+      summary: Update a book
+      description: Updates an existing book.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookCreate'
+      responses:
+        '200':
+          description: Book updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    delete:
+      tags:
+        - books
+      summary: Delete a book
+      description: Deletes a book by ID.
+      responses:
+        '204':
+          description: Book deleted successfully. No content.
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /students:
+    get:
+      tags:
+        - students
+      summary: Retrieve all students
+      description: Retrieves a list of all students.
+      responses:
+        '200':
+          description: A list of students.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    post:
+      tags:
+        - students
+      summary: Add a new student
+      description: Creates a new student.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentCreate'
+      responses:
+        '201':
+          description: Student created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /students/{id}:
+    parameters:
+      - $ref: '#/components/parameters/id'
+    get:
+      tags:
+        - students
+      summary: Retrieve a student by ID
+      description: Retrieves a single student.
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    put:
+      tags:
+        - students
+      summary: Update a student
+      description: Updates student data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentCreate'
+      responses:
+        '200':
+          description: Student updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    delete:
+      tags:
+        - students
+      summary: Delete a student
+      description: Deletes a student by ID.
+      responses:
+        '204':
+          description: Student deleted successfully. No content.
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /loans:
+    get:
+      tags:
+        - loans
+      summary: Retrieve all loans
+      description: Retrieves a list of all loan records.
+      responses:
+        '200':
+          description: A list of loans.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Loan'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    post:
+      tags:
+        - loans
+      summary: Create a new loan
+      description: Records a book loan.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanCreate'
+      responses:
+        '201':
+          description: Loan created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /loans/{id}:
+    parameters:
+      - $ref: '#/components/parameters/id'
+    get:
+      tags:
+        - loans
+      summary: Retrieve a loan by ID
+      description: Retrieves a single loan record.
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /loans/{id}/return:
+    parameters:
+      - $ref: '#/components/parameters/id'
+    patch:
+      tags:
+        - loans
+      summary: Return a loaned book
+      description: Marks a loan as returned.
+      responses:
+        '200':
+          description: Loan status updated to returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+components:
+  parameters:
+    page:
+      name: page
+      in: query
+      description: Page number (starting from 1)
+      schema:
+        type: integer
+        format: int32
+        default: 1
+    size:
+      name: size
+      in: query
+      description: Number of items per page
+      schema:
+        type: integer
+        format: int32
+        default: 10
+    id:
+      name: id
+      in: path
+      description: UUID identifier
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    Book:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        author:
+          type: string
+        isbn:
+          type: string
+          description: ISBN-13 format
+        publisher:
+          type: string
+        pageCount:
+          type: integer
+        stock:
+          type: integer
+      required:
+        - id
+        - title
+        - author
+        - isbn
+        - publisher
+        - pageCount
+        - stock
+    BookCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        author:
+          type: string
+        isbn:
+          type: string
+          format: isbn
+        publisher:
+          type: string
+        pageCount:
+          type: integer
+        stock:
+          type: integer
+      required:
+        - title
+        - author
+        - isbn
+        - publisher
+        - pageCount
+        - stock
+    Student:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        studentNumber:
+          type: string
+        email:
+          type: string
+          format: email
+        isActive:
+          type: boolean
+      required:
+        - id
+        - name
+        - studentNumber
+        - email
+        - isActive
+    StudentCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        studentNumber:
+          type: string
+        email:
+          type: string
+          format: email
+        isActive:
+          type: boolean
+      required:
+        - name
+        - studentNumber
+        - email
+        - isActive
+    Loan:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        studentId:
+          type: string
+          format: uuid
+        bookId:
+          type: string
+          format: uuid
+        loanDate:
+          type: string
+          format: date
+        returnDate:
+          type: string
+          format: date
+          nullable: true
+        status:
+          type: string
+          enum:
+            - ongoing
+            - returned
+            - late
+      required:
+        - id
+        - studentId
+        - bookId
+        - loanDate
+        - status
+    LoanCreate:
+      type: object
+      properties:
+        studentId:
+          type: string
+          format: uuid
+        bookId:
+          type: string
+          format: uuid
+        loanDate:
+          type: string
+          format: date
+      required:
+        - studentId
+        - bookId
+        - loanDate
+    BookList:
+      type: object
+      properties:
+        totalItems:
+          type: integer
+        page:
+          type: integer
+        size:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Book'
+      required:
+        - totalItems
+        - page
+        - size
+        - items
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+      required:
+        - code
+        - message
+  responses:
+    BadRequest:
+      description: Invalid request parameters.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalError:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+security:
+  - ApiKeyAuth: []
+tags:
+  - name: books
+    description: Operations related to books
+  - name: students
+    description: Operations related to students
+  - name: loans
+    description: Operations related to loan records
